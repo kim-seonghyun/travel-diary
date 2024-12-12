@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.trip.travelgraph.mapper.TravelGraphMapper">
+
+    <resultMap id="graph" type="com.ssafy.trip.travelgraph.entity.TravelGraph">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="mountain" column="mountain"/>
+        <result property="sea" column="sea"/>
+        <result property="valley" column="valley"/>
+        <result property="city" column="city"/>
+        <result property="festival" column="festival"/>
+    </resultMap>
+
+    <resultMap id="diary" type="com.ssafy.trip.travelgraph.entity.DiaryGraph">
+        <id property="id" column="id"/>
+        <result property="travelDiaryId" column="travel_diary_id"/>
+        <result property="mountain" column="mountain"/>
+        <result property="sea" column="sea"/>
+        <result property="valley" column="valley"/>
+        <result property="city" column="city"/>
+        <result property="festival" column="festival"/>
+    </resultMap>
+
+    <select id="findTravelGraphByUserId" parameterType="Long" resultMap="graph">
+        select * from travel_graph where user_id = #{id}
+    </select>
+
+    <update id="calculateTravelDegree" parameterType="map">
+        update travel_graph
+        <set>
+            <foreach collection="tagList" item="tag" separator=",">
+                <if test="tag eq 'mountain'">
+                    mountain = mountain + 1
+                </if>
+                <if test="tag eq 'sea'">
+                    sea = sea + 1
+                </if>
+                <if test="tag eq 'valley'">
+                    valley = valley + 1
+                </if>
+                <if test="tag eq 'city'">
+                    city = city + 1
+                </if>
+                <if test="tag eq 'festival'">
+                    festival = festival + 1
+                </if>
+            </foreach>
+        </set>
+        where user_id = #{userId}
+    </update>
+
+    <select id="findDiaryGraphByDiaryId" parameterType="Long" resultMap="diary">
+        select * from travel_diary_graph where travel_diary_id = #{diaryId}
+    </select>
+
+    <insert id="generateTravelGraph" parameterType="Long">
+        insert into travel_graph(user_id, mountain, sea, valley, city, festival)
+        values (#{userId}, 0,0,0,0,0)
+    </insert>
+
+
+</mapper>
